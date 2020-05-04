@@ -1,12 +1,13 @@
-import JsxParser from "react-jsx-parser";
-import React, { useRef, useEffect } from "react";
+import React from "react";
 import ReactDOM from "react-dom";
+import JsxParser from "react-jsx-parser";
 
 export let TEMPLATING_ERROR = /<!--.*ERROR MESSAGE STARTS HERE.*-->/;
 
 export function render(components, root, callback) {
   if (!TEMPLATING_ERROR.test(root.innerHTML)) {
-    ReactDOM.render(parse({ XmlComment, ...components }, root), root, () => {
+    ReactDOM.render(parse(components, root), root, () => {
+      restoreComments(root);
       if (callback instanceof Function) {
         callback();
       }
@@ -15,8 +16,10 @@ export function render(components, root, callback) {
 }
 
 function parse(components, root) {
-  const jsx = escapeComments(extractJSX(root));
+  return parseJSX(components, escapeComments(extractJSX(root)));
+}
 
+function parseJSX(components, jsx) {
   return React.createElement(
     JsxParser,
     { components, jsx, disableFragments: true, renderInWrapper: false },
@@ -24,33 +27,44 @@ function parse(components, root) {
   );
 }
 
+function escapeComments(jsx) {
+  return jsx.replace(/<!--/g, "&lt;!--").replace(/-->/g, "--&gt;");
+}
+
 function extractJSX(root) {
   let jsx = "";
-
   if (root) {
-    [...root.getElementsByTagName("script")].forEach(node => {
+    [...root.getElementsByTagName("script")].forEach((node) => {
       jsx += node.innerHTML;
     });
   }
-
   return jsx
     .replace(/\n/g, "")
-    .replace(/[\t ]+</g, "<")
-    .replace(/>[\t ]+</g, "><")
-    .replace(/>[\t ]+$/g, ">");
+    .replace(/[\t ]+\</g, "<")
+    .replace(/\>[\t ]+\</g, "><")
+    .replace(/\>[\t ]+$/g, ">");
 }
 
-function escapeComments(jsx) {
-  return jsx.replace(/<!--/g, "<XmlComment>").replace(/-->/g, "</XmlComment>");
-}
-
-function XmlComment({ children }) {
-  const ref = useRef(null);
-
-  useEffect(() => {
-    ReactDOM.unmountComponentAtNode(ref.current);
-    ref.current.outerHTML = `<!--${children}-->`;
-  });
-
-  return React.createElement("div", { ref });
+function restoreComments(root) {
+  if (root) {
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    while (walker.nextNode()) {
+      const node = walker.currentNode;
+      if (
+        node.nodeValue &&
+        node.nodeValue.includes("<!--") &&
+        node.nodeValue.includes("-->")
+      ) {
+        const comments = node.nodeValue.trim().split(/<!--(.*?)-->/m);
+        const nextSibling = node.nextSibling;
+        comments.forEach((comment) => {
+          if (comment.trim().length > 0) {
+            const commentObject = document.createComment(comment);
+            node.parentNode.insertBefore(commentObject, nextSibling);
+            node.nodeValue = null;
+          }
+        });
+      }
+    }
+  }
 }
