@@ -4,6 +4,12 @@ import JsxParser from "react-jsx-parser";
 
 export let TEMPLATING_ERROR = /<!--.*ERROR MESSAGE STARTS HERE.*-->/;
 
+/**
+ * @param {{[key: string]: React.ElementType}} components
+ * @param {Element} root
+ * @param {() => void} [callback]
+ * @returns {void}
+ */
 export function render(components, root, callback) {
   if (!TEMPLATING_ERROR.test(root.innerHTML)) {
     ReactDOM.render(parse(components, root), root, () => {
