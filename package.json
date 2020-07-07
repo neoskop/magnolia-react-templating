@@ -1,7 +1,7 @@
 {
   "name": "magnolia-react-templating",
   "description": "Use React JSX Components in Magnolia templates (e.g. Freemarker).",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "license": "MIT",
   "author": "Maik Jablonski <jablonski@neoskop.de> (https://www.neoskop.de)",
   "keywords": [
@@ -19,6 +19,6 @@
   "dependencies": {
     "react": "^16.x",
     "react-dom": "^16.x",
-    "react-jsx-parser": "^1.23.x"
+    "react-jsx-parser": "^1.25.x"
   }
 }
