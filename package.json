@@ -16,9 +16,15 @@
   },
   "homepage": "https://github.com/neoskop/magnolia-react-templating",
   "main": "index.js",
+  "browser": "index.umd.js",
   "dependencies": {
     "react": "16||17",
     "react-dom": "16||17",
     "react-jsx-parser": "1.27"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^18.0.0",
+    "@rollup/plugin-node-resolve": "^11.2.1",
+    "rollup": "^2.45.2"
   }
 }
