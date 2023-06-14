@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import JsxParser from "react-jsx-parser";
 
 export let TEMPLATING_ERROR = /<!--.*ERROR MESSAGE STARTS HERE.*-->/;
@@ -12,12 +13,18 @@ export let TEMPLATING_ERROR = /<!--.*ERROR MESSAGE STARTS HERE.*-->/;
  */
 export function render(components, root, callback) {
   if (!TEMPLATING_ERROR.test(root.innerHTML)) {
-    ReactDOM.render(parse(components, root), root, () => {
+    const restoreCallback = () => {
       restoreComments(root);
       if (callback instanceof Function) {
         callback();
       }
-    });
+    };
+    if ("requestIdleCallback" in window) {
+      createRoot(root).render(parse(components, root));
+      window.requestIdleCallback(restoreCallback);
+    } else {
+      ReactDOM.render(parse(components, root), root, restoreCallback);
+    }
   }
 }
 
