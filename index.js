@@ -19,11 +19,14 @@ export function render(components, root, callback) {
         callback();
       }
     };
-    if ("requestIdleCallback" in window) {
-      createRoot(root).render(parse(components, root));
-      window.requestIdleCallback(restoreCallback);
-    } else {
+    if (
+      navigator.userAgent.includes("Safari") &&
+      !navigator.userAgent.includes("Chrome")
+    ) {
       ReactDOM.render(parse(components, root), root, restoreCallback);
+    } else {
+      createRoot(root).render(parse(components, root));
+      setTimeout(restoreCallback, 0);
     }
   }
 }
