@@ -1,6 +1,5 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { createRoot } from "react-dom/client";
 import JsxParser from "react-jsx-parser";
 
 export let TEMPLATING_ERROR = /<!--.*ERROR MESSAGE STARTS HERE.*-->/;
@@ -19,15 +18,7 @@ export function render(components, root, callback) {
         callback();
       }
     };
-    if (
-      navigator.userAgent.includes("Safari") &&
-      !navigator.userAgent.includes("Chrome")
-    ) {
-      ReactDOM.render(parse(components, root), root, restoreCallback);
-    } else {
-      createRoot(root).render(parse(components, root));
-      setTimeout(restoreCallback, 0);
-    }
+    ReactDOM.render(parse(components, root), root, restoreCallback);
   }
 }
 
