@@ -67,7 +67,9 @@ function restoreComments(root) {
         comments.forEach((comment) => {
           if (comment.trim().length > 0) {
             const commentObject = document.createComment(comment);
-            node.parentNode.insertBefore(commentObject, nextSibling);
+            if (node.parentNode) {
+              node.parentNode.insertBefore(commentObject, nextSibling);
+            }
             node.nodeValue = null;
           }
         });
