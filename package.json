@@ -19,6 +19,6 @@
   "dependencies": {
     "react": "17 || 18",
     "react-dom": "17 || 18",
-    "react-jsx-parser": "1.29.0"
+    "react-jsx-parser": "2.0.0"
   }
 }
