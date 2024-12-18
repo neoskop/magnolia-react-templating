@@ -11,13 +11,14 @@ export let TEMPLATING_ERROR = /<!--.*ERROR MESSAGE STARTS HERE.*-->/;
  */
 export function render(components, root, callback) {
   if (!TEMPLATING_ERROR.test(root.innerHTML)) {
-    const restoreCallback = () => {
-      restoreComments(root);
-      if (callback instanceof Function) {
-        callback();
+    document.addEventListener("readystatechange", (e) => {
+      if (e.target?.["readyState"] === "complete") {
+        restoreComments(root);
+        if (callback instanceof Function) {
+          callback();
+        }
       }
-    };
-    document.addEventListener("readystatechange", restoreCallback);
+    });
     createRoot(root).render(parse(components, root));
   }
 }
