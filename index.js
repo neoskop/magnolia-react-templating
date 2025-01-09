@@ -14,17 +14,12 @@ export function render(components, root, callback) {
     document.addEventListener("readystatechange", (e) => {
       if (e.target?.["readyState"] === "complete") {
         restoreComments(root);
-        const refresh = function () {
-          if (parent["mgnlRefresh"] instanceof Function) {
-            parent["mgnlRefresh"]();
-            if (callback instanceof Function) {
-              callback();
-            }
-          } else {
-            setTimeout(refresh);
-          }
-        };
-        refresh();
+        if (typeof parent["mgnlRefresh"] === "function") {
+          parent["mgnlRefresh"]();
+        }
+        if (typeof callback === "function") {
+          callback();
+        }
       }
     });
     createRoot(root).render(parse(components, root));
