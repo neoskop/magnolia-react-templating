@@ -14,9 +14,17 @@ export function render(components, root, callback) {
     document.addEventListener("readystatechange", (e) => {
       if (e.target?.["readyState"] === "complete") {
         restoreComments(root);
-        if (callback instanceof Function) {
-          callback();
-        }
+        const refresh = function () {
+          if (parent["mgnlRefresh"] instanceof Function) {
+            parent["mgnlRefresh"]();
+            if (callback instanceof Function) {
+              callback();
+            }
+          } else {
+            setTimeout(refresh);
+          }
+        };
+        refresh();
       }
     });
     createRoot(root).render(parse(components, root));
