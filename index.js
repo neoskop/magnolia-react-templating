@@ -13,12 +13,19 @@ export function render(components, root, callback) {
   if (!TEMPLATING_ERROR.test(root.innerHTML)) {
     document.addEventListener("readystatechange", (e) => {
       if (e.target?.["readyState"] === "complete") {
-        restoreComments(root);
-        if (typeof parent["mgnlRefresh"] === "function") {
-          parent["mgnlRefresh"]();
-        }
-        if (typeof callback === "function") {
-          callback();
+        const restore = () => {
+          restoreComments(root);
+          if (typeof parent["mgnlRefresh"] === "function") {
+            parent["mgnlRefresh"]();
+          }
+          if (typeof callback === "function") {
+            callback();
+          }
+        };
+        if (typeof requestIdleCallback === "function") {
+          requestIdleCallback(restore);
+        } else {
+          setTimeout(restore, 250);
         }
       }
     });
