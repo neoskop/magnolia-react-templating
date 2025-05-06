@@ -3,7 +3,7 @@
   "description": "Use React JSX Components in Magnolia templates (e.g. Freemarker).",
   "version": "4.3.0",
   "license": "MIT",
-  "author": "Maik Jablonski <jablonski@neoskop.de> (https://www.neoskop.de)",
+  "author": "Maik Jablonski <jablonski@neoskop.de>",
   "keywords": [
     "react",
     "jsx",
